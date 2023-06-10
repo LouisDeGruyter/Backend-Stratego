@@ -1,0 +1,146 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+// zal auth0 of dergelijke zijn
+model User{
+  userId          Int      @id @default(autoincrement())
+  // username        String   @unique
+  // password        String
+  // email           String   @unique
+  // role            String   @default("user")
+  rank            Rank     @relation(fields: [rankId], references: [rankId])
+  rankId          Int
+  friends         User[] @relation("friends")
+  friendsRelation User[] @relation("friends")
+  games           GamePlayer[]
+  pieces          Piece[]
+  decks           Deck[]
+  player          Player?
+  gamesWon        Game[]   
+}
+// gegevens van de speler
+model Player {
+  playerId        Int      @id @default(autoincrement())
+  playerName      String   @unique
+  player          User     @relation(fields: [userId], references: [userId])
+  userId          Int      @unique
+}
+
+
+// de game
+model Game{
+  gameId          Int      @id @default(autoincrement())
+  finished        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  players         GamePlayer[] 
+  pieces          Piece[]
+  moves           Move[]
+  winner          User?    @relation(fields: [winnerId], references: [userId])
+  winnerId        Int?
+
+}
+// de spelers in de game
+model GamePlayer{
+  gamePlayerId    Int      @id @default(autoincrement())
+  isHost          Boolean  @default(true)
+  user            User   @relation(fields: [userId], references: [userId])
+  userId        Int
+  game            Game     @relation(fields: [gameId], references: [gameId])
+  gameId          Int
+}
+// de rang van de speler
+model Rank{
+  rankId          Int      @id @default(autoincrement())
+  rankName        String   @unique
+  rankValue       Int      @unique
+  users           User[]
+}
+// de stukken van de speler
+model Piece{
+  pieceId         Int      @id @default(autoincrement())
+  pieceName       String   
+  pieceValue      Int      
+  pieceColor      String   
+  locationX       Int
+  locationY       Int
+  user            User   @relation(fields: [userId], references: [userId])
+  userId          Int
+  game            Game     @relation(fields: [gameId], references: [gameId])
+  gameId          Int
+  moves           Move[]
+  
+}
+// het veld waarop gespeeld wordt
+model Field{
+  fieldId         Int      @id @default(autoincrement())
+  fieldName       String   
+  fieldType       String
+  fieldSquares    FieldSquare[]
+  fieldPieceSets  FieldPieceSet?
+  decks           Deck[]
+}
+// de vakjes op het veld
+model FieldSquare{
+  fieldSquareId   Int      @id @default(autoincrement())
+  fieldSquareName String
+  fieldType       String
+  fieldColor      String?
+  locationX       Int       
+  locationY       Int
+  field           Field    @relation(fields: [fieldId], references: [fieldId])
+  fieldId         Int
+}
+// de stukken die op het veld liggen
+model FieldPieceSet{
+  fieldPieceSetId Int      @id @default(autoincrement())
+  pieceType       String   // het type stuk dat op het veld ligt
+  count           Int      // hoeveel stukken van dit type er op het veld liggen
+  field           Field    @relation(fields: [fieldId], references: [fieldId]) // het veld waarop de stukken liggen
+  fieldId         Int      @unique
+}
+// voorgemaakte opstelling van pieces die horen bij een bepaald veld en speler
+model Deck{
+  deckId          Int      @id @default(autoincrement())
+  deckName        String   @unique
+  field           Field    @relation(fields: [fieldId], references: [fieldId])
+  fieldId         Int
+  user            User   @relation(fields: [userId], references: [userId])
+  userId          Int
+  deckPieces      DeckPiece[]
+}
+
+model DeckPiece{
+  deckPieceId     Int      @id @default(autoincrement())
+  pieceType       String   // het type stuk dat op het veld ligt
+  locationX       Int
+  locationY       Int
+  deck            Deck     @relation(fields: [deckId], references: [deckId]) // het veld waarop de stukken liggen
+  deckId          Int      @unique
+}
+
+model Move{
+  moveId          Int      @id @default(autoincrement())
+  sourceX         Int
+  sourceY         Int
+  targetX         Int
+  targetY         Int
+  moveNumber      Int
+  piece       Piece    @relation(fields: [pieceId], references: [pieceId])
+  pieceId         Int
+  moveGame        Game     @relation(fields: [gameId], references: [gameId])
+  gameId          Int
+  moveCreatedAt   DateTime @default(now())
+  moveUpdatedAt   DateTime @updatedAt
+}
+
+
+
