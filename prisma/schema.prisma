@@ -23,14 +23,14 @@ model User{
   games           GamePlayer[]
   pieces          Piece[]
   decks           Deck[]
-  player          Player?
+  player          Player? 
   gamesWon        Game[]   
 }
 // gegevens van de speler
 model Player {
   playerId        Int      @id @default(autoincrement())
   playerName      String   @unique
-  player          User     @relation(fields: [userId], references: [userId])
+  user            User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId          Int      @unique
 }
 
@@ -52,9 +52,9 @@ model Game{
 model GamePlayer{
   gamePlayerId    Int      @id @default(autoincrement())
   isHost          Boolean  @default(true)
-  user            User   @relation(fields: [userId], references: [userId])
-  userId        Int
-  game            Game     @relation(fields: [gameId], references: [gameId])
+  user            User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  userId          Int
+  game            Game     @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
   gameId          Int
 }
 // de rang van de speler
@@ -72,9 +72,10 @@ model Piece{
   pieceColor      String   
   locationX       Int
   locationY       Int
-  user            User   @relation(fields: [userId], references: [userId])
+  isCaptured      Boolean  @default(false)
+  user            User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId          Int
-  game            Game     @relation(fields: [gameId], references: [gameId])
+  game            Game     @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
   gameId          Int
   moves           Move[]
   
@@ -91,12 +92,12 @@ model Field{
 // de vakjes op het veld
 model FieldSquare{
   fieldSquareId   Int      @id @default(autoincrement())
-  fieldSquareName String
-  fieldType       String
+  name            String
+  type            String
   fieldColor      String?
   locationX       Int       
   locationY       Int
-  field           Field    @relation(fields: [fieldId], references: [fieldId])
+  field           Field    @relation(fields: [fieldId], references: [fieldId], onDelete: Cascade)
   fieldId         Int
 }
 // de stukken die op het veld liggen
@@ -104,16 +105,16 @@ model FieldPieceSet{
   fieldPieceSetId Int      @id @default(autoincrement())
   pieceType       String   // het type stuk dat op het veld ligt
   count           Int      // hoeveel stukken van dit type er op het veld liggen
-  field           Field    @relation(fields: [fieldId], references: [fieldId]) // het veld waarop de stukken liggen
+  field           Field    @relation(fields: [fieldId], references: [fieldId], onDelete: Cascade) // het veld waarop de stukken liggen
   fieldId         Int      @unique
 }
 // voorgemaakte opstelling van pieces die horen bij een bepaald veld en speler
 model Deck{
   deckId          Int      @id @default(autoincrement())
   deckName        String   @unique
-  field           Field    @relation(fields: [fieldId], references: [fieldId])
+  field           Field    @relation(fields: [fieldId], references: [fieldId], onDelete: Cascade)
   fieldId         Int
-  user            User   @relation(fields: [userId], references: [userId])
+  user            User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId          Int
   deckPieces      DeckPiece[]
 }
@@ -123,7 +124,7 @@ model DeckPiece{
   pieceType       String   // het type stuk dat op het veld ligt
   locationX       Int
   locationY       Int
-  deck            Deck     @relation(fields: [deckId], references: [deckId]) // het veld waarop de stukken liggen
+  deck            Deck     @relation(fields: [deckId], references: [deckId], onDelete: Cascade) // het veld waarop de stukken liggen
   deckId          Int      @unique
 }
 
@@ -134,12 +135,12 @@ model Move{
   targetX         Int
   targetY         Int
   moveNumber      Int
-  piece       Piece    @relation(fields: [pieceId], references: [pieceId])
-  pieceId         Int
-  moveGame        Game     @relation(fields: [gameId], references: [gameId])
-  gameId          Int
   moveCreatedAt   DateTime @default(now())
-  moveUpdatedAt   DateTime @updatedAt
+  piece           Piece    @relation(fields: [pieceId], references: [pieceId])
+  pieceId         Int
+  game            Game     @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
+  gameId          Int
+ 
 }
 
 
