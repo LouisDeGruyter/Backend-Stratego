@@ -1,14 +1,19 @@
-{ 
-  "prisma":{
-  "seed": "node --require esbuild-register prisma/seed.ts"
+{
+  "prisma": {
+    "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.15.0",
+    "config": "^3.3.9",
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
-    "socket.io": "^4.6.2"
+    "node-emoji": "1.11.0",
+    "serialize-error": "^11.0.0",
+    "socket.io": "^4.6.2",
+    "ts-node": "^10.9.1",
+    "winston": "^3.9.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
