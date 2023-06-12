@@ -30,6 +30,7 @@ model User{
 model Player {
   playerId        Int      @id @default(autoincrement())
   playerName      String   @unique
+  experience      Int      @default(0) // current experience of the player in the current rank
   user            User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId          Int      @unique
 }
@@ -62,12 +63,13 @@ model Rank{
   rankId          Int      @id @default(autoincrement())
   rankName        String   @unique
   rankValue       Int      @unique
+  experience      Int      @default(0) // hoeveel je nodig hebt om naar de volgende rank te gaan
   users           User[]
 }
 // de stukken van de speler
 model Piece{
   pieceId         Int      @id @default(autoincrement())
-  pieceName       String   
+  pieceName       String     
   pieceValue      Int      
   pieceColor      String   
   locationX       Int
