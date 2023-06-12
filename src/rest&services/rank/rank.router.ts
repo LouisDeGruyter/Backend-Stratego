@@ -1,6 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import {body, validationResult} from 'express-validator';
+import 'express-async-errors';
 const RankService = require('./rank.service');
 
 const RankRouter = express.Router();

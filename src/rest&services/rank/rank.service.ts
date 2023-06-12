@@ -1,5 +1,5 @@
 import {db} from "../../utils/db.server";
-const ServiceError = require('../../core/serviceError');
+import ServiceError from '../../core/serviceError';
 type Rank={
     rankName: string;
     rankValue: number;
@@ -17,7 +17,7 @@ const getRankById = async (id: number)=> {
         }
     });
     if(!rank){
-        throw new ServiceError(404, 'Rank not found');
+        throw  ServiceError.notFound('Rank not found', {rankId: id});
     }
     return rank;
 }
@@ -39,7 +39,7 @@ const updateRank = async (id: number, rank: Rank)=> {
         }
     });
     if(!existingRank){
-        throw new ServiceError(404, 'Rank not found');
+        throw ServiceError.notFound('Rank not found', {rankId: id});
     }
     const updatedRank = await db.rank.update({
         where: {
@@ -60,7 +60,7 @@ const deleteRank = async (id: number)=> {
         }
     });
     if(!existingRank){
-        throw new ServiceError(404, 'Rank not found');
+        throw ServiceError.notFound('Rank not found', {rankId: id});
     }
     const deletedRank = await db.rank.delete({
         where: {

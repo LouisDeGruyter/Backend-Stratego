@@ -1,5 +1,6 @@
 import {db} from "../../utils/db.server";
-const ServiceError = require('../../core/serviceError');
+import ServiceError from '../../core/serviceError';
+
  const mapFieldSquaresTo2DArray = require('../../utils/mapFieldSquaresTo2DArray')
 type Field={
     fieldName: string;
@@ -21,7 +22,7 @@ const getFieldById = async (id: number) => {
       },
     });
     if (!field) {
-      throw new ServiceError(404, 'Field not found');
+        throw ServiceError.notFound('Field not found', { fieldId: id });
     }
   
     const fieldSquaresArray = mapFieldSquaresTo2DArray(field.fieldSquares);
@@ -51,7 +52,7 @@ const updateField = async (id: number, field: Field)=> {
         }
     });
     if(!existingField){
-        throw new ServiceError(404, 'Field not found');
+        throw ServiceError.notFound('Field not found', {fieldId: id});
     }
     const updatedField = await db.field.update({
         where: {
@@ -72,7 +73,7 @@ const deleteField = async (id: number)=> {
         }
     });
     if(!existingField){
-        throw new ServiceError(404, 'Field not found');
+        throw ServiceError.notFound('Field not found', {fieldId: id});
     }
     const deletedField = await db.field.delete({
         where: {
@@ -94,7 +95,7 @@ const deleteField = async (id: number)=> {
       },
     });
     if (!existingField) {
-      throw new ServiceError(404, 'Field not found');
+        throw ServiceError.notFound('Field not found', { fieldId: id });
     }
     const fieldSquaresArray = mapFieldSquaresTo2DArray(existingField.fieldSquares);
 

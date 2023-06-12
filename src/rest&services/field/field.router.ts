@@ -1,6 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import {body, validationResult} from 'express-validator';
+ import 'express-async-errors';
 const FieldService = require('./field.service');
 
 const FieldRouter = express.Router();
