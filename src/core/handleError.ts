@@ -2,20 +2,24 @@ import { Request, Response, NextFunction } from 'express';
 import ServiceError from './serviceError';
 
 function handleError(
-    err: typeof ServiceError|TypeError,
-    req: Request,
-    res: Response,
-    next: NextFunction
+  err: ServiceError | TypeError,
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) {
-    let customError = err;
-    if (!(err instanceof ServiceError)) {
-        customError = ServiceError.badRequest("Bad request ", err);
-    }
-    // we are not using the next function to prvent from triggering
-  // the default error-handler. However, make sure you are sending a
-  // response to client to prevent memory leaks in case you decide to
-  // NOT use, like in this example, the NextFunction .i.e., next(new Error())
-  res.status((customError as ServiceError).status).send(customError);
-};
-export default handleError
-        
+  let customError: ServiceError;
+
+  if (err instanceof ServiceError) {
+    customError = err;
+  } else {
+    customError = ServiceError.badRequest('Bad request', err);
+  }
+  const errorbody = {
+    message: customError.message,
+    status: customError.status,
+    stack: customError.stack,
+  }
+  res.status(customError.status).send(errorbody);
+}
+
+export default handleError;

@@ -7,12 +7,14 @@ const BAD_REQUEST = 'BAD_REQUEST';
 class ServiceError extends Error {
   code: string;
   details: any;
+  message: string;
 
   constructor(code: string, message: string, details: any = {}) {
     super(message);
     this.code = code;
     this.details = details;
     this.name = 'ServiceError';
+    this.message = message;
   }
 
   static notFound(message: string, details: any) {
