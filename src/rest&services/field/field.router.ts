@@ -1,5 +1,5 @@
 import express from 'express';
-import type { Request, Response } from 'express';
+import type { Request, Response,Express } from 'express';
 import {body, validationResult} from 'express-validator';
  import 'express-async-errors';
 const FieldService = require('./field.service');
@@ -60,7 +60,7 @@ FieldRouter.get('/fieldsquares/:id', async (req: Request, res: Response) => {
     return res.status(200).json(field);
 }
 );
-
-module.exports = (app: any) =>
-app.use('/api/fields', FieldRouter);
+export default function installField(app: Express) {
+    app.use('/api/fields', FieldRouter);
+}
 

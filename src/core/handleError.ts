@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import ServiceError from './serviceError';
+import { getLogger } from './logging';
 
 function handleError(
   err: ServiceError | TypeError,
@@ -14,12 +15,17 @@ function handleError(
   } else {
     customError = ServiceError.badRequest('Bad request', err);
   }
-  const errorbody = {
+  
+  const errorBody = {
     message: customError.message,
     status: customError.status,
     stack: customError.stack,
-  }
-  res.status(customError.status).send(errorbody);
+  };
+
+  // Log the error using the Winston logger
+  getLogger().error(customError.message, { error: customError });
+
+  res.status(customError.status).send(errorBody);
 }
 
 export default handleError;

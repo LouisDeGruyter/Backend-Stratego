@@ -1,8 +1,8 @@
-const installRankRouter = require('./rank/rank.router');
-const installFieldRouter = require('./field/field.router');
+import { Express } from 'express';
+import installRankRouter from './rank/rank.router';
+import installFieldRouter from './field/field.router';
 
-module.exports = (app:any) => {
-    installRankRouter(app);
-    installFieldRouter(app);
-
+export default function installRest(app: Express) {
+  installRankRouter(app);
+  installFieldRouter(app);
 }

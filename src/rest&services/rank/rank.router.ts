@@ -1,4 +1,5 @@
 import express from 'express';
+import {Express} from 'express';
 import type { Request, Response } from 'express';
 import {body, validationResult} from 'express-validator';
 import 'express-async-errors';
@@ -54,8 +55,10 @@ RankRouter.delete('/:id', async (req: Request, res: Response) => {
 }
 );
 
-module.exports = (app: any) => 
-app.use('/api/ranks', RankRouter);
 
+export default function installRank(app: Express) {
+    app.use('/api/ranks', RankRouter);
+  }
+  
 
     
