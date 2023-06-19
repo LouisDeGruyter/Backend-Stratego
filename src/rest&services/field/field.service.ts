@@ -1,47 +1,46 @@
 import {db} from "../../utils/db.server";
 import ServiceError from '../../core/serviceError';
 import {mapFieldSquaresTo2DArray} from '../../utils/mapFieldSquaresTo2DArray';
-import {Field,FieldSquare} from "@prisma/client";
+import {Field, FieldSquare} from "@prisma/client";
+import { CreateField } from "../../utils/modelTypes";
 
-const getAllFields = async ()=> {
-    const fields = await db.field.findMany();
+const getAllFields = async (): Promise<Field[]>=> {
+    const fields: Field[] = await db.field.findMany();
     return fields;
 }
 
-const getFieldById = async (id: number) => {
-    const field = await db.field.findUnique({
-      where: {
-        fieldId: id,
-      },
-      include: {
-        fieldSquares: true,
-      },
-    });
-    if (!field) {
-        throw ServiceError.notFound('Field not found', { fieldId: id });
-    }
-  
-    const fieldSquaresArray = mapFieldSquaresTo2DArray(field.fieldSquares);
+const getFieldById = async (id: number) : Promise<Field & { fieldSquares: FieldSquare[][] }> => {
+        const field = await db.field.findUnique({
+            where: {
+                fieldId: id,
+            },
+            include: {
+                fieldSquares: true,
+            },
+        });
+        if (!field) {
+                throw ServiceError.notFound('Field not found', { fieldId: id });
+        }
+    
+        const fieldSquaresArray = mapFieldSquaresTo2DArray(field.fieldSquares);
 
-    const fieldWithFieldSquares = {
-        ...field,
-        fieldSquares: fieldSquaresArray,
-    };
+        const fieldWithFieldSquares = {
+                ...field,
+                fieldSquares: fieldSquaresArray,
+        };
 
-    return fieldWithFieldSquares;
+        return fieldWithFieldSquares as Field & { fieldSquares: FieldSquare[][] };
 }
 
-const createField = async (field: Field)=> {
-    const newField = await db.field.create({
-        data: {
-            fieldName: field.fieldName,
-            fieldType: field.fieldType
-        }
+
+const createField = async (field: CreateField): Promise<Field>=> {
+    const newField:Field = await db.field.create({
+        data: field
     });
     return newField;
 }
 
-const updateField = async (id: number, field: Field)=> {
+const updateField = async (id: number, field: Field): Promise<Field>=> {
     const existingField = await db.field.findUnique({
         where: {
             fieldId: id
@@ -50,14 +49,11 @@ const updateField = async (id: number, field: Field)=> {
     if(!existingField){
         throw ServiceError.notFound('Field not found', {fieldId: id});
     }
-    const updatedField = await db.field.update({
+    const updatedField:Field = await db.field.update({
         where: {
             fieldId: id
         },
-        data: {
-            fieldName: field.fieldName,
-            fieldType: field.fieldType
-        }
+        data: field
     });
     return updatedField;
 }
@@ -68,20 +64,21 @@ const deleteField = async (id: number)=> {
             fieldId: id
         }
     });
+    
     if(!existingField){
         throw ServiceError.notFound('Field not found', {fieldId: id});
     }
-    const deletedField = await db.field.delete({
+    const deletedField:Field = await db.field.delete({
         where: {
             fieldId: id
         }
     });
-    return deletedField;
+    return deletedField as Field;
 }
 
   
   
-  const getAllFieldSquaresByFieldId = async (id: number) => {
+  const getAllFieldSquaresByFieldId = async (id: number): Promise<FieldSquare[][]> => {
     const existingField = await db.field.findUnique({
       where: {
         fieldId: id,
@@ -93,20 +90,22 @@ const deleteField = async (id: number)=> {
     if (!existingField) {
         throw ServiceError.notFound('Field not found', { fieldId: id });
     }
-    const fieldSquaresArray = mapFieldSquaresTo2DArray(existingField.fieldSquares);
+    const fieldSquaresArray: FieldSquare[][] = mapFieldSquaresTo2DArray(existingField.fieldSquares);
 
-    return fieldSquaresArray;
+    return fieldSquaresArray as FieldSquare[][];
     
   };
   
     
 
-module.exports = {
+  export {
     getAllFields,
     getFieldById,
     createField,
     updateField,
     deleteField,
-    getAllFieldSquaresByFieldId
-}
+    getAllFieldSquaresByFieldId,
+  };
+
+
 

@@ -1,16 +1,14 @@
 import {db} from "../../utils/db.server";
 import ServiceError from '../../core/serviceError';
-type Rank={
-    rankName: string;
-    rankValue: number;
-}
+import { CreateRank } from "../../utils/modelTypes";
+import { Rank } from "@prisma/client";
 
-const getAllRanks = async ()=> {
+const getAllRanks = async (): Promise<Rank[]>=> {
     const ranks = await db.rank.findMany();
     return ranks;
 }
 
-const getRankById = async (id: number)=> {
+const getRankById = async (id: number):Promise<Rank>=> {
     const rank = await db.rank.findUnique({
         where: {
             rankId: id
@@ -22,7 +20,7 @@ const getRankById = async (id: number)=> {
     return rank;
 }
 
-const createRank = async (rank: Rank)=> {
+const createRank = async (rank: Rank):Promise<Rank>=> {
     const newRank = await db.rank.create({
         data: {
             rankName: rank.rankName,
@@ -32,7 +30,7 @@ const createRank = async (rank: Rank)=> {
     return newRank;
 }
 
-const updateRank = async (id: number, rank: Rank)=> {
+const updateRank = async (id: number, rank: Rank):Promise<Rank>=> {
     const existingRank = await db.rank.findUnique({
         where: {
             rankId: id
@@ -70,7 +68,7 @@ const deleteRank = async (id: number)=> {
     return deletedRank;
 }
 
-module.exports = {
+export {
     getAllRanks,
     getRankById,
     createRank,

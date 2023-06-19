@@ -15,10 +15,11 @@ if(!process.env.PORT){
 }
 initializeLogger({level: 'info', disabled: false});
 const app = express();
-app.use(requestLoggingMiddleware);
-installRest(app);
 app.use(cors());
 app.use(express.json());
+app.use(requestLoggingMiddleware);
+installRest(app);
+
 app.use(handleError);
 
 const logger = getLogger();

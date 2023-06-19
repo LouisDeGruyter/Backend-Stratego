@@ -1,20 +1,24 @@
 import express from 'express';
 import {Express} from 'express';
 import type { Request, Response } from 'express';
-import {body, validationResult} from 'express-validator';
+import { body, validationResult, param } from 'express-validator';
 import 'express-async-errors';
-const RankService = require('./rank.service');
+import * as RankService from './rank.service';
+
 
 const RankRouter = express.Router();
 
-RankRouter.get('/', async (req: Request, res: Response) => {
+RankRouter.get('/',
+ async (req: Request, res: Response) => {
     
         const ranks = await RankService.getAllRanks();
         return res.status(200).json(ranks);
 }
 );
 
-RankRouter.get('/:id', async (req: Request, res: Response) => {
+RankRouter.get('/:id',
+param('id').isInt().toInt(),
+ async (req: Request, res: Response) => {
     const id = parseInt(req.params.id,10);
     const rank = await RankService.getRankById(id);
     return res.status(200).json(rank);
@@ -22,8 +26,8 @@ RankRouter.get('/:id', async (req: Request, res: Response) => {
 );
 
 RankRouter.post('/',
-    body('rankName').isString(),
-    body('rankValue').isNumeric(),
+    body('rankName').isString().notEmpty().withMessage('rankName must be a string and not empty'),
+    body('rankValue').isNumeric().notEmpty().withMessage('rankValue must be a number and not empty'),
     async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()){
@@ -35,8 +39,9 @@ RankRouter.post('/',
 );
 
 RankRouter.put('/:id',
-    body('rankName').isString(),
-    body('rankValue').isNumeric(),
+param('id').isInt().toInt(),
+body('rankName').isString().notEmpty().withMessage('rankName must be a string and not empty'),
+body('rankValue').isNumeric().notEmpty().withMessage('rankValue must be a number and not empty'),
     async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()){
@@ -48,7 +53,9 @@ RankRouter.put('/:id',
     }
 );
 
-RankRouter.delete('/:id', async (req: Request, res: Response) => {
+RankRouter.delete('/:id',
+param('id').isInt().toInt(),
+async (req: Request, res: Response) => {
     const id = parseInt(req.params.id,10);
     await RankService.deleteRank(id);
     return res.status(204).end();
