@@ -2,88 +2,11 @@ import { type } from "os";
 import {db} from "../src/utils/db.server";
 import { PrismaClient,Prisma } from "@prisma/client";
 import { get } from "http";
+import {CreateField,CreateRank,CreateUser,CreatePlayer,CreateGame,CreateGamePlayer, CreatePiece, CreateDeckPiece, CreateFieldSquare, CreateFieldPieceSet, CreateMove,CreateDeck,CreatePieceType} from "../src/utils/modelTypes"
 const prisma = new PrismaClient();
 
-type User = {
-    rankId: number;
-}
 
-type Player = {
-    playerName: string;
-    userId: number;
-    experience: number;
-}
-
-type Game = {
-    finished: boolean;
-    winnerId?: number;
-}
-
-type GamePlayer = {
-    isHost: boolean;
-    userId: number;
-    gameId: number;
-}
-
-type Rank={
-    rankName: string;
-    rankValue: number;
-    experience: number;
-}
-type Piece={
-    pieceName: string;
-    pieceValue: number;
-    pieceColor: string;
-    locationX: number;
-    locationY: number;
-    isCaptured: boolean;
-    userId: number;
-    gameId: number;
-}
-
-type Field={
-    fieldName: string;
-    fieldType: string;
-}
-
-type FieldSquare={
-    name: string;
-    type: string;
-    fieldColor?: string;
-    locationX: number;
-    locationY: number;
-    fieldId: number;
-}
-
-type FieldPieceSet={
-    pieceType: string;
-    count: number;
-    fieldId: number;
-}
-
-type Deck={
-    deckName: string;
-    fieldId: number;
-    userId: number;
-}
-
-type DeckPiece={
-    pieceType: string;
-    locationX: number;
-    locationY: number;
-    deckId: number;
-}
-
-type Move={
-    sourceX: number;
-    sourceY: number;
-    targetX: number;
-    targetY: number;
-    moveNumber: number;
-    gameId: number;
-    pieceId: number;
-}
-function getRanks(): Array<Rank> {
+function getRanks(): Array<CreateRank> {
     return [
         { rankName: "Rookie", rankValue: 1 , experience: 100},
         { rankName: "Beginner", rankValue: 2 , experience: 200},
@@ -97,7 +20,7 @@ function getRanks(): Array<Rank> {
         { rankName: "Godlike", rankValue: 10 , experience: 1000},
     ];
 }
-function getUsers(): Array<User> {
+function getUsers(): Array<CreateUser> {
     return [
         { rankId: 1 },
         { rankId: 2 },
@@ -112,7 +35,7 @@ function getUsers(): Array<User> {
     ];
 }
 
-function getPlayers(): Array<Player> {
+function getPlayers(): Array<CreatePlayer> {
     return [
         { playerName: "Player1", userId: 1, experience: 100 },
         { playerName: "Player2", userId: 2, experience: 200 },
@@ -127,7 +50,7 @@ function getPlayers(): Array<Player> {
     ];
 }
 
-function getGames(): Array<Game> {
+function getGames(): Array<CreateGame> {
     return [
         { finished: false },
         { finished: false },
@@ -137,7 +60,7 @@ function getGames(): Array<Game> {
     ];
 }
 
-function getGamePlayers(): Array<GamePlayer> {
+function getGamePlayers(): Array<CreateGamePlayer> {
     return [
         { isHost: true, userId: 1, gameId: 1 },
         { isHost: false, userId: 2, gameId: 1 },
@@ -151,16 +74,100 @@ function getGamePlayers(): Array<GamePlayer> {
         { isHost: false, userId: 2, gameId: 5 },
     ];
 }
+function CreatePieceTypes(): Array<CreatePieceType> {
+    return [
+        {
+            pieceName: "Flag",
+            pieceValue: 0,
+            pieceType: "Flag",
+        },
+        {
+            pieceName: "Spy",
+            pieceValue: 1,
+            pieceType: "Unit",
+        },
+        {
+            pieceName: "Scout",
+            pieceValue: 2,
+            pieceType: "Fast Unit",
+        },
+        {
+            pieceName: "Miner",
+            pieceValue: 3,
+            pieceType: "Unit",
+        },
+        {
+            pieceName: "Sergeant",
+            pieceValue: 4,
+            pieceType: "Unit",
+        },
+        {
+            pieceName: "Lieutenant",
+            pieceValue: 5,
+            pieceType: "Unit",
+        },
+        {
+            pieceName: "Captain",
+            pieceValue: 6,
+            pieceType: "Unit",
+        },
+        {
+            pieceName: "Major",
+            pieceValue: 7,
+            pieceType: "Unit",
+        },
+        {
+            pieceName: "Colonel",
+            pieceValue: 8,
+            pieceType: "Unit",
+        },
+        {
+            pieceName: "General",
+            pieceValue: 9,
+            pieceType: "Unit",
+        },
+        {
+            pieceName: "Marshall",
+            pieceValue: 10,
+            pieceType: "Unit",
+        },
+        {
+            pieceName: "Bomb",
+            pieceValue: 0,
+            pieceType: "Bomb",
+        },
+        // added optional pieces
+        {
+            pieceName: "Sniper",
+            pieceValue: 9,
+            pieceType: "Fast Suicide Unit",
+        },
+        {
+            pieceName: "Cloak",
+            pieceValue: 2,
+            pieceType: "Invisible Fast Unit",
+        },
+        {
+            pieceName: "Suicide Bomber",
+            pieceValue: 11,
+            pieceType:"Suicide Unit"
+        },
+        {
+            pieceName:"Shield Bearer",
+            pieceValue: 0,
+            pieceType: "Defender Unit"
+        },
+    ];
+}
 
 
-
-function getPieces(): Array<Piece> {
+function getPieces(): Array<CreatePiece> {
     return [
 
     ];
 }
 
-function getFields(): Array<Field> {
+function getFields(): Array<CreateField> {
     return [
         { fieldName: "Classic", fieldType: "Standard" },
         { fieldName: "User1", fieldType: "Custom" },
@@ -168,7 +175,7 @@ function getFields(): Array<Field> {
     ];
 }
 
-function getFieldSquares(): Array<FieldSquare> {
+function getFieldSquares(): Array<CreateFieldSquare> {
     return [
         { name: "A1", type: "Spawn", fieldColor: "Blue", locationX: 1, locationY: 1, fieldId: 1 },
         { name: "A2", type: "Spawn", fieldColor: "Blue", locationX: 1, locationY: 2, fieldId: 1 },
@@ -279,21 +286,84 @@ function getFieldSquares(): Array<FieldSquare> {
     ];
 }
 
-function getFieldPieceSets(): Array<FieldPieceSet> {
+function getFieldPieceSets(): Array<CreateFieldPieceSet> {
+    return [
+        { 
+            fieldId: 1,
+            pieceTypeId: 1,
+            count: 1,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 2,
+            count: 1,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 3,
+            count: 8,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 4,
+            count: 5,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 5,
+            count: 4,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 6,
+            count: 4,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 7,
+            count: 4,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 8,
+            count: 3,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 9,
+            count: 2,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 10,
+            count: 1,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 11,
+            count: 1,
+        },
+        {
+            fieldId: 1,
+            pieceTypeId: 12,
+            count: 6,
+        },
+
+    ];
+}
+
+function getDecks(): Array<CreateDeck> {
     return [];
 }
 
-function getDecks(): Array<Deck> {
+function getDeckPieces(): Array<CreateDeckPiece> {
     return [];
 }
 
-function getDeckPieces(): Array<DeckPiece> {
+function getMoves(): Array<CreateMove> {
     return [];
 }
 
-function getMoves(): Array<Move> {
-    return [];
-}
 
 async function seed() {
 
@@ -303,6 +373,7 @@ async function seed() {
         { player: getPlayers() },
         { game: getGames() },
         { gamePlayer: getGamePlayers() },
+        { pieceType: CreatePieceTypes() },
         { piece: getPieces() },
         { field: getFields() },
         { fieldSquare: getFieldSquares() },
@@ -310,6 +381,7 @@ async function seed() {
         { deck: getDecks() },
         { deckPiece: getDeckPieces() },
         { move: getMoves() },
+        
       ];      
     
     for (const item of data) {
@@ -320,6 +392,7 @@ async function seed() {
 }
 
 async function seedType(type: string, data: Array<any>) {
+    console.log(`Start seeding ${type}`)
     await prisma[type].createMany({
         data: data,
         skipDuplicates: true,

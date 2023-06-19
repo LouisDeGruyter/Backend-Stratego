@@ -1,11 +1,7 @@
 import {db} from "../../utils/db.server";
 import ServiceError from '../../core/serviceError';
-
- const mapFieldSquaresTo2DArray = require('../../utils/mapFieldSquaresTo2DArray')
-type Field={
-    fieldName: string;
-    fieldType: string;
-}
+import {mapFieldSquaresTo2DArray} from '../../utils/mapFieldSquaresTo2DArray';
+import {Field,FieldSquare} from "@prisma/client";
 
 const getAllFields = async ()=> {
     const fields = await db.field.findMany();

@@ -1,15 +1,5 @@
-import e from "express";
-
-type FieldSquare={
-  name: string;
-  type: string;
-  fieldColor?: string|null;
-  locationX: number;
-  locationY: number;
-  fieldId: number;
-}
-
-  module.exports = (fieldSquares: FieldSquare[]):FieldSquare[][] => {
+import { FieldSquare } from "@prisma/client";
+  export const mapFieldSquaresTo2DArray = (fieldSquares: FieldSquare[]): FieldSquare[][] => {
     // Find the maximum values of locationX and locationY
     if(fieldSquares.length === 0){
       return [];
@@ -39,4 +29,4 @@ type FieldSquare={
     }
   
     return filteredFieldSquaresArray;
-  }
+  };

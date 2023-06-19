@@ -69,12 +69,13 @@ model Rank{
 // de stukken van de speler
 model Piece{
   pieceId         Int      @id @default(autoincrement())
-  pieceName       String     
-  pieceValue      Int      
+           
   pieceColor      String   
   locationX       Int
   locationY       Int
   isCaptured      Boolean  @default(false)
+  pieceType       PieceType @relation(fields: [pieceTypeId], references: [pieceTypeId], onDelete: Cascade)
+  pieceTypeId     Int  
   user            User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId          Int
   game            Game     @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
@@ -88,7 +89,7 @@ model Field{
   fieldName       String   
   fieldType       String
   fieldSquares    FieldSquare[]
-  fieldPieceSets  FieldPieceSet?
+  fieldPieceSets  FieldPieceSet[]
   decks           Deck[]
 }
 // de vakjes op het veld
@@ -96,7 +97,7 @@ model FieldSquare{
   fieldSquareId   Int      @id @default(autoincrement())
   name            String
   type            String
-  fieldColor      String?
+  fieldColor      String? 
   locationX       Int       
   locationY       Int
   field           Field    @relation(fields: [fieldId], references: [fieldId], onDelete: Cascade)
@@ -105,10 +106,11 @@ model FieldSquare{
 // de stukken die op het veld liggen
 model FieldPieceSet{
   fieldPieceSetId Int      @id @default(autoincrement())
-  pieceType       String   // het type stuk dat op het veld ligt
   count           Int      // hoeveel stukken van dit type er op het veld liggen
+  pieceType       PieceType @relation(fields: [pieceTypeId], references: [pieceTypeId], onDelete: Cascade)
+  pieceTypeId      Int      
   field           Field    @relation(fields: [fieldId], references: [fieldId], onDelete: Cascade) // het veld waarop de stukken liggen
-  fieldId         Int      @unique
+  fieldId         Int      
 }
 // voorgemaakte opstelling van pieces die horen bij een bepaald veld en speler
 model Deck{
@@ -123,7 +125,8 @@ model Deck{
 
 model DeckPiece{
   deckPieceId     Int      @id @default(autoincrement())
-  pieceType       String   // het type stuk dat op het veld ligt
+  pieceType       PieceType @relation(fields: [pieceTypeId], references: [pieceTypeId], onDelete: Cascade)
+  pieceTypeId      Int      
   locationX       Int
   locationY       Int
   deck            Deck     @relation(fields: [deckId], references: [deckId], onDelete: Cascade) // het veld waarop de stukken liggen
@@ -143,6 +146,16 @@ model Move{
   game            Game     @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
   gameId          Int
  
+}
+model PieceType{
+  pieceTypeId     Int      @id @default(autoincrement())
+  pieceName       String   @unique
+  pieceType       String
+  pieceValue      Int
+  fieldPieceSet   FieldPieceSet[]
+  deckPieces      DeckPiece[]
+  pieces          Piece[]
+
 }
 
 
