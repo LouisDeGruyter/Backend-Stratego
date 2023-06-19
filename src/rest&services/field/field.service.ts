@@ -2,34 +2,36 @@ import {db} from "../../utils/db.server";
 import ServiceError from '../../core/serviceError';
 import {mapFieldSquaresTo2DArray} from '../../utils/mapFieldSquaresTo2DArray';
 import {Field, FieldSquare} from "@prisma/client";
-import { CreateField } from "../../utils/modelTypes";
+import { CreateField,FieldWithSquares,FieldWith2DSquares,FieldSquares2D } from "../../utils/modelTypes";
 
 const getAllFields = async (): Promise<Field[]>=> {
     const fields: Field[] = await db.field.findMany();
     return fields;
 }
 
-const getFieldById = async (id: number) : Promise<Field & { fieldSquares: FieldSquare[][] }> => {
-        const field = await db.field.findUnique({
-            where: {
-                fieldId: id,
-            },
-            include: {
-                fieldSquares: true,
-            },
-        });
-        if (!field) {
-                throw ServiceError.notFound('Field not found', { fieldId: id });
-        }
-    
-        const fieldSquaresArray = mapFieldSquaresTo2DArray(field.fieldSquares);
 
-        const fieldWithFieldSquares = {
-                ...field,
-                fieldSquares: fieldSquaresArray,
-        };
 
-        return fieldWithFieldSquares as Field & { fieldSquares: FieldSquare[][] };
+const getFieldById = async (id: number) : Promise<FieldWith2DSquares> => {
+    const field: FieldWithSquares|null = await db.field.findUnique({
+        where: {
+            fieldId: id,
+        },
+        include: {
+            fieldSquares: true,
+        },
+    });
+    if (!field) {
+        throw ServiceError.notFound('Field not found', { fieldId: id });
+    }
+
+    const fieldSquaresArray:FieldSquares2D = mapFieldSquaresTo2DArray(field.fieldSquares);
+
+    const fieldWithFieldSquares: FieldWith2DSquares = {
+        ...field,
+        fieldSquares: fieldSquaresArray,
+    };
+
+    return fieldWithFieldSquares;
 }
 
 
@@ -40,8 +42,8 @@ const createField = async (field: CreateField): Promise<Field>=> {
     return newField;
 }
 
-const updateField = async (id: number, field: Field): Promise<Field>=> {
-    const existingField = await db.field.findUnique({
+const updateField = async (id: number, field: CreateField): Promise<Field>=> {
+    const existingField:Field|null = await db.field.findUnique({
         where: {
             fieldId: id
         }
@@ -58,8 +60,8 @@ const updateField = async (id: number, field: Field): Promise<Field>=> {
     return updatedField;
 }
 
-const deleteField = async (id: number)=> {
-    const existingField = await db.field.findUnique({
+const deleteField = async (id: number):Promise<Field>=> {
+    const existingField:Field|null = await db.field.findUnique({
         where: {
             fieldId: id
         }
@@ -73,13 +75,13 @@ const deleteField = async (id: number)=> {
             fieldId: id
         }
     });
-    return deletedField as Field;
+    return deletedField;
 }
 
   
-  
+ 
   const getAllFieldSquaresByFieldId = async (id: number): Promise<FieldSquare[][]> => {
-    const existingField = await db.field.findUnique({
+    const existingField:{fieldSquares: FieldSquare[];}|null= await db.field.findUnique({
       where: {
         fieldId: id,
       },
@@ -91,9 +93,7 @@ const deleteField = async (id: number)=> {
         throw ServiceError.notFound('Field not found', { fieldId: id });
     }
     const fieldSquaresArray: FieldSquare[][] = mapFieldSquaresTo2DArray(existingField.fieldSquares);
-
-    return fieldSquaresArray as FieldSquare[][];
-    
+    return fieldSquaresArray;
   };
   
     

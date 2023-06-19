@@ -1,4 +1,4 @@
-import { Piece } from '@prisma/client';
+import { Prisma,FieldSquare,Field } from '@prisma/client';
 
 type CreateUser = {
     rankId: number;
@@ -84,6 +84,16 @@ type CreateUser = {
     pieceValue: number;
     pieceType: string;
   }
+  type FieldWithSquares = Prisma.FieldGetPayload<{
+    include: {
+        fieldSquares: true;
+    }
+}>;
+type FieldWith2DSquares = Field & {
+  fieldSquares: FieldSquare[][];
+};
+
+type FieldSquares2D = FieldSquare[][];
   
   export type {
     CreateUser,
@@ -99,5 +109,8 @@ type CreateUser = {
     CreateDeckPiece,
     CreateMove,
     CreatePieceType,
+    FieldWithSquares,
+    FieldWith2DSquares,
+    FieldSquares2D
   };
   

@@ -17,7 +17,7 @@ RankRouter.get('/',
 );
 
 RankRouter.get('/:id',
-param('id').isInt().toInt(),
+param('id').isInt().toInt().withMessage('id must be an integer'),
  async (req: Request, res: Response) => {
     const id = parseInt(req.params.id,10);
     const rank = await RankService.getRankById(id);
@@ -26,8 +26,8 @@ param('id').isInt().toInt(),
 );
 
 RankRouter.post('/',
-    body('rankName').isString().notEmpty().withMessage('rankName must be a string and not empty'),
-    body('rankValue').isNumeric().notEmpty().withMessage('rankValue must be a number and not empty'),
+body('rankName').isString().withMessage('rankName must be a string').notEmpty().withMessage('rankName must not be empty'),
+body('rankValue').isNumeric().withMessage('rankValue must be a number').notEmpty().withMessage('rankValue must not be empty'),
     async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()){
@@ -39,9 +39,9 @@ RankRouter.post('/',
 );
 
 RankRouter.put('/:id',
-param('id').isInt().toInt(),
-body('rankName').isString().notEmpty().withMessage('rankName must be a string and not empty'),
-body('rankValue').isNumeric().notEmpty().withMessage('rankValue must be a number and not empty'),
+param('id').isInt().toInt().withMessage('id must be an integer'),
+body('rankName').isString().withMessage('rankName must be a string').notEmpty().withMessage('rankName must not be empty'),
+  body('rankValue').isNumeric().withMessage('rankValue must be a number').notEmpty().withMessage('rankValue must not be empty'),
     async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if(!errors.isEmpty()){
@@ -54,7 +54,7 @@ body('rankValue').isNumeric().notEmpty().withMessage('rankValue must be a number
 );
 
 RankRouter.delete('/:id',
-param('id').isInt().toInt(),
+param('id').isInt().toInt().withMessage('id must be an integer'),
 async (req: Request, res: Response) => {
     const id = parseInt(req.params.id,10);
     await RankService.deleteRank(id);
@@ -63,7 +63,7 @@ async (req: Request, res: Response) => {
 );
 
 
-export default function installRank(app: Express) {
+export default function installRank(app: Express):void {
     app.use('/api/ranks', RankRouter);
   }
   

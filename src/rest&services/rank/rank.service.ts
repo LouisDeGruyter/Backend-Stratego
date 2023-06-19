@@ -4,12 +4,12 @@ import { CreateRank } from "../../utils/modelTypes";
 import { Rank } from "@prisma/client";
 
 const getAllRanks = async (): Promise<Rank[]>=> {
-    const ranks = await db.rank.findMany();
+    const ranks: Rank[] = await db.rank.findMany();
     return ranks;
 }
 
 const getRankById = async (id: number):Promise<Rank>=> {
-    const rank = await db.rank.findUnique({
+    const rank:Rank|null = await db.rank.findUnique({
         where: {
             rankId: id
         }
@@ -20,8 +20,8 @@ const getRankById = async (id: number):Promise<Rank>=> {
     return rank;
 }
 
-const createRank = async (rank: Rank):Promise<Rank>=> {
-    const newRank = await db.rank.create({
+const createRank = async (rank: CreateRank):Promise<Rank>=> {
+    const newRank:Rank = await db.rank.create({
         data: {
             rankName: rank.rankName,
             rankValue: rank.rankValue
@@ -30,8 +30,8 @@ const createRank = async (rank: Rank):Promise<Rank>=> {
     return newRank;
 }
 
-const updateRank = async (id: number, rank: Rank):Promise<Rank>=> {
-    const existingRank = await db.rank.findUnique({
+const updateRank = async (id: number, rank: CreateRank):Promise<Rank>=> {
+    const existingRank:Rank|null = await db.rank.findUnique({
         where: {
             rankId: id
         }
@@ -39,7 +39,7 @@ const updateRank = async (id: number, rank: Rank):Promise<Rank>=> {
     if(!existingRank){
         throw ServiceError.notFound('Rank not found', {rankId: id});
     }
-    const updatedRank = await db.rank.update({
+    const updatedRank:Rank = await db.rank.update({
         where: {
             rankId: id
         },
@@ -52,7 +52,7 @@ const updateRank = async (id: number, rank: Rank):Promise<Rank>=> {
 }
 
 const deleteRank = async (id: number)=> {
-    const existingRank = await db.rank.findUnique({
+    const existingRank:Rank|null = await db.rank.findUnique({
         where: {
             rankId: id
         }
@@ -60,7 +60,7 @@ const deleteRank = async (id: number)=> {
     if(!existingRank){
         throw ServiceError.notFound('Rank not found', {rankId: id});
     }
-    const deletedRank = await db.rank.delete({
+    const deletedRank:Rank = await db.rank.delete({
         where: {
             rankId: id
         }

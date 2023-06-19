@@ -34,7 +34,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "seed": "prisma db seed",
-    "update": "npx prisma generate && npx prisma db push && yarn seed"
+    "update": "npx prisma generate && npx prisma db push --force-reset && yarn seed"
   }
 
 }
