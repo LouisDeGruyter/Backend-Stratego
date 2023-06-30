@@ -1,11 +1,12 @@
-const createServer = require('./createServer');
-
-async function main() {
+import 'reflect-metadata';
+import {createExpressServer} from './createserver';
+async function main():Promise<void> {
     try {
-        const server = await createServer();
+        const server = await createExpressServer();
+
         await server.start();
 
-        async function onClose() {
+        async function onClose():Promise<void> {
             await server.stop();
             process.exit(0);
         }
