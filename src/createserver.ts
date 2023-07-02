@@ -11,6 +11,7 @@ import {createServer} from "http";
 import { Server } from 'socket.io';
 import config from 'config';
 import socket from './utils/socket';
+import { checkIfAuthenticated } from './core/auth';
 dotenv.config();
 
 if(!process.env.PORT){
@@ -18,6 +19,7 @@ if(!process.env.PORT){
 }
 initializeLogger({level: 'info', disabled: false});
 const app = express();
+// app.use(checkJwtToken);
 app.use(cors());
 app.use(express.json());
 app.use(requestLoggingMiddleware);

@@ -4,11 +4,12 @@ import type { Request, Response } from 'express';
 import { body, validationResult, param } from 'express-validator';
 import 'express-async-errors';
 import * as RankService from './rank.service';
+import {checkIfAuthenticated} from '../../core/auth';
 
 
 const RankRouter = express.Router();
 
-RankRouter.get('/',
+RankRouter.get('/',checkIfAuthenticated,
  async (req: Request, res: Response) => {
     
         const ranks = await RankService.getAllRanks();
