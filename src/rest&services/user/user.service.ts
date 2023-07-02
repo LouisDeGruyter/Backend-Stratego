@@ -29,11 +29,11 @@ const getUserById = async (id: number):Promise<User>=> {
     return user;
 }
 
-const createUser = async (user: CreateUser):Promise<User>=> {
-    const newUser:User = await db.user.create({
-        data: user
-    });
-    return newUser;
+const createUser = async (user: any):Promise<any>=> {
+    // const newUser:User = await db.user.create({
+    //     data: user
+    // });
+    return user;
 }
 
 const updateUser = async (id: number, user: CreateUser):Promise<User>=> {
@@ -70,11 +70,17 @@ const deleteUser = async (id: number)=> {
     });
     return deletedUser;
 }
+const getUserByAuth= async (authorization: string | undefined)=> {
+    return null;
+}
 
 export {
     getAllUsers,
     getUserById,
     createUser,
     updateUser,
-    deleteUser 
+    deleteUser,
+    getUserByAuth 
 }
+
+

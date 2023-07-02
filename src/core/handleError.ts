@@ -9,7 +9,7 @@ function handleError(
   next: NextFunction
 ) {
   let customError: ServiceError;
-
+  console.log(err);
   if (err instanceof ServiceError) {
     customError = err;
   } else {
